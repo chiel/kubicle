@@ -1,0 +1,22 @@
+# Don't show directory listings for URLs which map to a directory.
+Options -Indexes
+
+# Let the system handle 404's
+ErrorDocument 404 /index.php
+
+# Set order in which indexes load
+DirectoryIndex index.php index.html index.htm
+
+# Check if the rewrite module is available
+<IfModule mod_rewrite.c>
+  RewriteEngine on
+
+  # Block access to hidden files
+  RewriteRule "(^|/)\." - [F]
+
+  # Direct everything (except favicon.ico) to the index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !=/favicon.ico
+  RewriteRule ^ index.php [L]
+</IfModule>
