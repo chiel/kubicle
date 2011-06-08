@@ -5,7 +5,7 @@
 require LIB.'/Common.php';
 
 // Admin paths
-Route::respond('admin/[controller]?/[action]?', function($controller, $action) {
+Route::respond('admin/[:controller]?/[:action]?', function($controller, $action) {
 	dump($controller, 'controller');
 	dump($action, 'action');
 });
