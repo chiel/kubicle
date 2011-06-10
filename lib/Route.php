@@ -1,5 +1,11 @@
 <?php if (!defined('WWW')) exit('No direct scritp access allowed.');
 /**
+ * Maps requests to callbacks.
+ *
+ * heavily inspired by klein.php.
+ *
+ * - https://github.com/chriso/klein.php
+ *
  * @author Chiel Kunkels <hello@chielkunkels.com>
  */
 class Route {
@@ -25,10 +31,22 @@ class Route {
 	 * @param string $path   The path to respond to
 	 * @param function $callback   The function to execute
 	 */
-	public static function respond($path, $callback)
+	public static function respond($method, $path, $callback = null)
 	{
+		if (null === $callback) {
+			$callback = $path;
+			$path = $method;
+			$method = 'GET';
+		}
+
 		if (is_callable($callback)) {
-			self::$routes[$path] = $callback;
+			if (!is_array($method)) {
+				$method = array($method);
+			}
+			$method = explode(',',strtoupper(implode(',',$method)));
+			self::$routes[] = array($method, $path, $callback);
+		} else {
+			echo 'Can\'t call provided callback.<br>'."\n";
 		}
 	}
 
@@ -37,12 +55,19 @@ class Route {
 	 */
 	public static function dispatch()
 	{
-		$uri = path();
+		$req_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+		$req_path = path();
 
-		foreach (self::$routes as $route => $callback) {
+		foreach (self::$routes as $route) {
+			list($method, $path, $callback) = $route;
+
+			// Check if method matches first
+			if (!in_array($req_method, $method)) {
+				continue;
+			}
+
 			// ! negates a match
-			if ('!' === $route{0}) {
-				dump($route, 'negated');
+			if ('!' === $path{0}) {
 				$negate = true;
 				$i = 1;
 			} else {
@@ -51,20 +76,20 @@ class Route {
 			}
 
 			// * matches all
-			if ('*' === $route) {
+			if ('*' === $path) {
 				$match = true;
 			}
 
 			// @ is for a custom regex
-			elseif('@' === $route{$i}) {
-				$match = preg_match('`'.substr($route, $i + 1).'`', $uri, $params);
+			elseif('@' === $path{$i}) {
+				$match = preg_match('`'.substr($path, $i + 1).'`', $req_path, $params);
 			}
 
-			//
+			// everything else
 			else {
-				$regex = self::regex($route);
+				$regex = self::regex($path);
 				dump($regex);
-				$match = preg_match($regex, $uri, $params);
+				$match = preg_match($regex, $req_path, $params);
 				dump($params);
 			}
 

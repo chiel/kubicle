@@ -11,9 +11,9 @@
 function dump($var, $label = '')
 {
 	echo '<pre style="background:#fff;color:#000;font:9px monaco,courier,monospace;">'."\n";
-	echo '=============== BEGIN DUMP: '.$label.' ==============='."\n";
+	echo '--------------- BEGIN DUMP: '.$label.' ---------------'."\n";
 	print_r($var);
-	echo "\n".'================ END DUMP: '.$label.' ================';
+	echo "\n".'---------------- END DUMP: '.$label.' ----------------';
 	echo '</pre>'."\n";
 }
 
