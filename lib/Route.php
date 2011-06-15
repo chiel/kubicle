@@ -2,8 +2,7 @@
 /**
  * Maps requests to callbacks.
  *
- * heavily inspired by klein.php.
- *
+ * Heavily inspired by klein.php.
  * - https://github.com/chriso/klein.php
  *
  * @author Chiel Kunkels <hello@chielkunkels.com>
@@ -75,6 +74,8 @@ class Route {
 				$i = 0;
 			}
 
+			$params = array();
+
 			// * matches all
 			if ('*' === $path) {
 				$match = true;
@@ -88,13 +89,16 @@ class Route {
 			// everything else
 			else {
 				$regex = self::regex($path);
-				dump($regex);
 				$match = preg_match($regex, $req_path, $params);
-				dump($params);
+				array_shift($params);
 			}
 
 			if ($negate ^ $match) {
-				dump($route, 'we have a match!');
+				try {
+					call_user_func_array($callback, $params);
+				} catch (Exception $e) {
+					dump($e);
+				}
 				break;
 			}
 		}
