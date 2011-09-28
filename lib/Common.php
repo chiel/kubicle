@@ -10,7 +10,7 @@
  */
 function dump($var, $label = '')
 {
-	echo '<pre style="background:#fff;color:#000;font:9px monaco,courier,monospace;">'."\n";
+	echo '<pre style="background:#fff;color:#000;font:11px monaco,courier,monospace;">'."\n";
 	echo '--------------- BEGIN DUMP: '.$label.' ---------------'."\n";
 	print_r($var);
 	echo "\n".'---------------- END DUMP: '.$label.' ----------------';
@@ -59,4 +59,17 @@ function path()
 function _exception()
 {
 	echo '_exception handler';
+}
+
+/**
+ * Convert an underscored string into a camelcase one
+ */
+function underscoreToCamel($string)
+{
+	$parts = explode('_', $string);
+	foreach ($parts as $part) {
+		$fl = substr($part, 0, 1);
+		$rest = substr($part, 1, strlen($part) - 1);
+		return strtoupper($fl).$rest;
+	}
 }

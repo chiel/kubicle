@@ -5,9 +5,13 @@
 require LIB.'/Common.php';
 
 // Admin paths
-Route::respond('admin/[:controller]?/[:action]?', function($controller = null, $action = 'list') {
-	dump($controller, 'controller');
-	dump($action, 'action');
+Route::respond('admin/[:controller]?/[:action]?/[i:id]?', function($controller = null, $action = 'index') {
+	if (empty($controller)) {
+		echo 'No controller found, means dashboard';
+	} else {
+		$controller = underscoreToCamel($controller);
+		call_user_func($controller.'::'.$action);
+	}
 });
 
 // Catch-all
