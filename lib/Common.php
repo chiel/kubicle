@@ -10,10 +10,11 @@
  */
 function dump($var, $label = '')
 {
-	echo '<pre style="background:#fff;color:#000;font:11px monaco,courier,monospace;">'."\n";
-	echo '--------------- BEGIN DUMP: '.$label.' ---------------'."\n";
+	$label = !empty($label) ? ' '.$label.' ' : '';
+	echo '<pre style="background:#fff;color:#000;font:11px monaco,courier,monospace;">';
+	echo '+++++++++++++++++++'.$label.'+++++++++++++++++++'."\n";
 	print_r($var);
-	echo "\n".'---------------- END DUMP: '.$label.' ----------------';
+	echo "\n".'-------------------'.$label.'-------------------';
 	echo '</pre>'."\n";
 }
 
@@ -26,6 +27,8 @@ function __autoload($class)
 		include_once(MOD.'/'.$class.'.php');
 	} elseif (file_exists(LIB.'/'.$class.'.php')) {
 		include_once(LIB.'/'.$class.'.php');
+	} else {
+		throw new Exception('Failed to find a class with name '.$class);
 	}
 }
 
@@ -33,20 +36,14 @@ function path()
 {
 	static $path;
 
-	// Check if it's not been fetched already
 	if (!isset($path)) {
 		if (isset($_SERVER['REQUEST_URI'])) {
 			$uri = strtok($_SERVER['REQUEST_URI'], '?');
 			$ln = strlen(rtrim(dirname($_SERVER['SCRIPT_NAME']), '\/'));
 			$path = substr(urldecode($uri), $ln + 1);
-		}
-
-		// This is the front page
-		else {
+		} else {
 			$path = '';
 		}
-
-		// Make sure there's no slashes at start/end
 		$path = trim($path, '/');
 	}
 
@@ -54,7 +51,7 @@ function path()
 }
 
 /**
- * Custom exception handler
+ * Custom uncaught exception handler
  */
 function _exception()
 {

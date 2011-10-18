@@ -1,0 +1,29 @@
+<form method="post" action="save.php">
+	<h2>Add a new blog post:</h2>
+	<fieldset>
+		<ul>
+			<li>
+				<label for="post-title">Title</label>
+				<input id="post-title" name="title" maxlength="255">
+			</li>
+			<li>
+				<label for="post-slug">Slug <span>- should be unique</span></label>
+				<input id="post-slug" name="slug" maxlength="50">
+			</li>
+			<li>
+				<label for="post-content">Content <span>- markdown enabled</span></label>
+				<textarea id="post-content" name="content" cols="70" rows="20"></textarea>
+			</li>
+			<li>
+				<label for="post-tags">Tags</label>
+				<select name="tags[]" multiple></select>
+			</li>
+			<li class="buttons">
+				<input type="submit" value="Save" name="post-submit">
+				<input type="checkbox" id="post-publish" name="publish">
+				<label for="post-publish">Publish blog post</label>
+			</li>
+		</ul>
+	</fieldset>
+</form>
+

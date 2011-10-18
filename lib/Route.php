@@ -23,6 +23,10 @@ class Route {
 		'*' => '.+?',
 		'**' => '.++'
 	);
+	/**
+	 * @var array   Matched parameters of a route
+	 */
+	private static $params = array();
 
 	/**
 	 * Add a callback to a path
@@ -35,7 +39,7 @@ class Route {
 		if (null === $callback) {
 			$callback = $path;
 			$path = $method;
-			$method = 'GET';
+			$method = 'ALL';
 		}
 
 		if (is_callable($callback)) {
@@ -61,7 +65,7 @@ class Route {
 			list($method, $path, $callback) = $route;
 
 			// Check if method matches first
-			if (!in_array($req_method, $method)) {
+			if (!in_array('ALL', $method) && !in_array($req_method, $method)) {
 				continue;
 			}
 
@@ -95,6 +99,7 @@ class Route {
 
 			if ($negate ^ $match) {
 				try {
+					self::$params = $params;
 					call_user_func_array($callback, $params);
 				} catch (Exception $e) {
 					dump($e);
@@ -102,6 +107,17 @@ class Route {
 				break;
 			}
 		}
+	}
+
+	/**
+	 *
+	 */
+	public static function param($key, $default = '')
+	{
+		if (isset(self::$params[$key])) {
+			return self::$params[$key];
+		}
+		return $default;
 	}
 
 	/**
